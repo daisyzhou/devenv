@@ -185,7 +185,10 @@ exec_always --no-startup-id gnome-sound-applet
 
 # dual-monitor display port setup at work
 # bindsym $mod+bracketright exec "xrandr --output DP1-2 --off && xrandr --output DP1-1 --off && xrandr --output DP1-1 --auto && xrandr --output DP1-2 --auto --left-of DP1-1 && xrandr --output eDP1 --left-of DP1-2 && xrandr --output DP1-1 --primary"
+#
+# including laptop screen:
 bindsym $mod+bracketright exec "xrandr --output DP1-2 --off && xrandr --output DP1-1 --off && xrandr --output DP1-1 --auto --right-of eDP1 && xrandr --output DP1-2 --auto --right-of DP1-1 && xrandr --output DP1-1 --primary"
+
 
 ## feh (dz)
 exec --no-startup-id feh --bg-center --randomize ~/Pictures/backgrounds/*

@@ -3,7 +3,10 @@
 # for examples
 
 # If not running interactively, don't do anything
-[ -z "$PS1" ] && return
+case $- in
+    *i*) ;;
+      *) return;;
+esac
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -28,7 +31,7 @@ shopt -s checkwinsize
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
@@ -81,6 +84,9 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
 # some more ls aliases
 alias ll='ls -alF'
 alias la='ls -A'
@@ -102,29 +108,31 @@ fi
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
+  fi
 fi
 
 
-# So that we can put the current git branch in the bash prompt
-function parse_git_branch {
-  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
-}
- 
-export PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w`parse_git_branch`\$ '
+####### Begin lines added by Daisy #######
 
-# alias git to hub
-eval "$(hub alias -s)"
+# Default editor for hg, git
+export EDITOR=vim
 
-# Maven permgen options need to be increased to build wibi-core
-export MAVEN_OPTS=-XX:MaxPermSize=512m
+# Set default vagrant provider to lxc (for Dropbox development vm)
+export VAGRANT_DEFAULT_PROVIDER=lxc
 
-# Wibi home set to the git repo for wibi
-export WIBI_HOME=/home/daisy/wibi/wibi/target/wibi-2.1.0-SNAPSHOT-release/wibi-2.1.0-SNAPSHOT
+# other things to install:
+# Java is installed in /usr/local/lib/jdk1.8.0_45 ... linked to /usr/local/bin/java
+# export JAVA_HOME=/usr/local/lib/jdk1.8.0_45/
 
-# Git shortcuts
-alias g-rmall='git diff --name-status -u | sed "/^[^D]/d" | sed "s/^D\\s\\+//" | xargs git rm'
-alias g-pullff='git pull --ff-only'
+# Add arcanist to path
+# export PATH=$PATH:/usr/local/arcanist/bin/
 
-export DOTA2_API_KEY=0809309B16AC2FF1AE5DFEF672D0D696
+# Add go to path
+# export GOROOT=/usr/local/go
+# export PATH=$PATH:$GOROOT/bin
+# export GOPATH=/home/daisy/gopath:/home/daisy/src/server/go
